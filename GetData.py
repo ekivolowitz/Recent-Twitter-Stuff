@@ -5,10 +5,10 @@ import os
 import time
 import sys 
 
-CKEY = ''
-CSECRET = ''
-AKEY = ''
-ASECRET = ''
+#CKEY = ''
+#CSECRET = ''
+#AKEY = ''
+#ASECRET = ''
 
 
 client = MongoClient()
