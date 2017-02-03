@@ -1,0 +1,23 @@
+{
+	"auth1": {
+		"CKEY" : "",
+		"CSecret" : "",
+		"AToken" : "",
+		"ASecret" : ""
+	},
+
+	"auth2" : {
+		"CKEY" : "",
+		"CSecret" : "",
+		"AToken" : "",
+		"ASecret" : ""
+	},
+
+	"auth3" : {
+		"CKEY" : "",
+		"CSecret" : "",
+		"AToken" : "",
+		"ASecret" : ""
+	}
+
+}
