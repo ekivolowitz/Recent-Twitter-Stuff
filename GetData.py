@@ -14,6 +14,27 @@ ASECRET = ''
 client = MongoClient()
 db = client.IDs
 
+AUTH_KEYS = []
+
+def authenticate(listWithAuthKeys):
+	auth = tweepy.OAuthHandler(listWithAuthKeys[0], listWithAuthKeys[1])
+	auth.set_access_token(listWithAuthKeys[2], listWithAuthKeys[3])
+	AUTH_KEYS.append(tweepy.API(auth))
+
+def initAuthKeys(keyCount):
+	try:
+		with open('config.json', 'r') as f:
+			data = json.load(f)
+			CKEY = data["auth" + str(keyCount)]["CKEY"]
+			CSECRET = data["auth" + str(keyCount)]["CSecret"]
+			AKEY = data["auth" + str(keyCount)]["AToken"]
+			ASECRET = data["auth" + str(keyCount)]["ASecret"]
+			key = [CKEY, CSECRET, AKEY, ASECRET]
+			authenticate(key)
+			initAuthKeys(keyCount + 1)
+	except KeyError:
+		print("Used all keys.")
+
 
 def formatJson(id, followersList, following):
 	user = {"TID" : id}
@@ -44,18 +65,11 @@ if __name__ == '__main__':
 	
 	lookupTerm = sys.argv[1]
 	dbCollectionName = "info_" + lookupTerm
-
-	# with open('config.json', 'r') as f:
-	#     data = json.load(f)
-	#     CKEY = data["auth1"]["CKEY"]
-	#     CSECRET = data["auth1"]["CSecret"]
-	#     AKEY = data["auth1"]["AToken"]
-	#     ASECRET = data["auth1"]["ASecret"]
-
-	auth = tweepy.OAuthHandler(CKEY, CSECRET)
-	auth.set_access_token(AKEY, ASECRET)
-	api = tweepy.API(auth)
-	
+	initAuthKeys(0)
+	#auth = tweepy.OAuthHandler(CKEY, CSECRET)
+	#auth.set_access_token(AKEY, ASECRET)
+	#api = tweepy.API(auth)
+		
 
 	#Get initial following/follower list of user entered. 
 	followerIDS = []
@@ -72,5 +86,5 @@ if __name__ == '__main__':
 	db[dbCollectionName].insert_one(formatJson(lookupTerm, followerIDS, followingIDS))
 
 	for follower in followerIDS:
-		getUserFollowers(follower, api)
+		getUserFollowers(follower, AUTH_KEYS[0])
 
