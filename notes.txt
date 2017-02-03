@@ -1,2 +1,0 @@
-Python location is: /home/evan/.local/lib/python3.5/site-packages
-
