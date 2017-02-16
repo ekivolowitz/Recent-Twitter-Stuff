@@ -14,7 +14,8 @@ db = client.IDs
 # This function will get the metadata of a given user, and then get their 20 newest tweets.
 # This appears to be the best way to get tweets from a given user, however I am still
 # looking for a better option. 
-if __name__ == '__main__':	
+def getUserTimeline(userID, api):	
+	'''
 	CSECRET = ""
 	AKEY = ""
 	ASECRET = ""
@@ -28,4 +29,6 @@ if __name__ == '__main__':
 	auth = tweepy.OAuthHandler(CKEY, CSECRET)
 	auth.set_access_token(AKEY, ASECRET)
 	api = tweepy.API(auth)
-	userResponse = api.user_timeline("therealkibbles")
+	'''
+	userResponse = api.user_timeline(userID)
+	return userResponse
