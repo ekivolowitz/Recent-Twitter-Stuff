@@ -4,7 +4,7 @@ import json
 import os
 import time
 import sys 
-
+from Timeline import getUserTimeline
 
 client = MongoClient()
 db = client.IDs
@@ -70,7 +70,13 @@ if __name__ == '__main__':
 	
 	lookupTerm = sys.argv[1]
 	dbCollectionName = "info_" + lookupTerm
+
 	initAuthKeys(0)
+
+	# getUserTimeline is implemented and works, however I haven't implemented it into this code yet.
+	# Simply call the function with the (<ID YOU WANT TO SEARCH>, <AUTH KEY YOU WANT TO USE>) and it will return
+	# the raw data of the user's metadata, and 20 most recent tweets.
+	#print(getUserTimeline(lookupTerm, AUTH_KEYS[0]))
 
 	#Get initial following/follower list of user entered. 
 	followerIDS = []
@@ -106,3 +112,5 @@ if __name__ == '__main__':
 	db[dbCollectionName].insert_one(formatJson(lookupTerm, followerIDS, followingIDS))
 	for follower in followerIDS:
 		getUserFollowers(follower, AUTH_KEYS[0])	
+
+
