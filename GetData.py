@@ -82,19 +82,16 @@ if __name__ == '__main__':
 	api = tweepy.API(auth)
 	
 		
-	print("Line 68")
 	for page in tweepy.Cursor(AUTH_KEYS[0].followers_ids, id=lookupTerm).pages(1):
 		print("Getting followers for " + str(lookupTerm))
 		followerIDS.extend(page)
 		time.sleep(61)
 	
-	print("line 74")
 	for page in tweepy.Cursor(AUTH_KEYS[0].friends_ids, id=lookupTerm).pages(1):
 		print("Getting people who " + str(lookupTerm) + " follows")
 		followingIDS.extend(page)
 		time.sleep(61)
 	
-	print("Line 80")
 	db[dbCollectionName].insert_one(formatJson(lookupTerm, followerIDS, followingIDS))
 	for follower in followerIDS:
 		getUserFollowers(follower, AUTH_KEYS[0])	
