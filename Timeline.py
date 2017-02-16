@@ -9,21 +9,11 @@ import sys
 client = MongoClient()
 db = client.IDs
 
-#def getUserFollowers(follower, api):
-	#print("Getting info for " + str(follower))
-	#followerIDS = []
-	#followingIDS = []
-	#dbCollectionName = "info_" + str(follower) 
-	#for page in tweepy.Cursor(api.followers_ids, id = follower).pages(1):
-	#	followerIDS.extend(page)
-	#	time.sleep(61)
-	
-	#for page in tweepy.Cursor(api.followers_ids, id = follower).pages(1):
-	#	followingIDS.extend(page)
-	#	time.sleep(61)
-	#db[dbCollectionName].insert_one(formatJson(follower, followerIDS, followingIDS))
-		
 
+
+# This function will get the metadata of a given user, and then get their 20 newest tweets.
+# This appears to be the best way to get tweets from a given user, however I am still
+# looking for a better option. 
 if __name__ == '__main__':	
 	CSECRET = ""
 	AKEY = ""
@@ -39,4 +29,3 @@ if __name__ == '__main__':
 	auth.set_access_token(AKEY, ASECRET)
 	api = tweepy.API(auth)
 	userResponse = api.user_timeline("therealkibbles")
-	print(userResponse)

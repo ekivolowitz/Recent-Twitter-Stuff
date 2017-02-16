@@ -11,11 +11,18 @@ db = client.IDs
 
 AUTH_KEYS = []
 
+
+
+# General helper function for initAuthKeys. This adds the authenticated key to AUTH_KEYS
+# for the program to use later. Currently, this does not work. I get an exception trying to use
+# multiple keys at once. 
 def authenticate(listWithAuthKeys):
 	auth = tweepy.OAuthHandler(listWithAuthKeys[0], listWithAuthKeys[1])
 	auth.set_access_token(listWithAuthKeys[2], listWithAuthKeys[3])
 	AUTH_KEYS.append(tweepy.API(auth))
 
+# Function will init the auth keys recursively and throw a "Used all keys." Error message when it 
+# has stepped through all of the auth keys in the secrets.json file.
 def initAuthKeys(keyCount):
 	try:
 		with open('secrets.json', 'r') as f:
@@ -30,7 +37,8 @@ def initAuthKeys(keyCount):
 	except KeyError:
 		print("Used all keys.")
 
-
+# This function takes information from getUserOneLevel and formats it into a python dictionary
+# which MongoDB will gladly accept and insert into the database.
 def formatJson(id, followersList, following):
 	user = {"TID" : id}
 	user["followers"] = {}
@@ -42,7 +50,9 @@ def formatJson(id, followersList, following):
 		user["following"][str(i)] = str(value)
 	return user
 
-def getUserFollowers(follower, api):
+# Given an originaly user (passed from main), this function will collect all of 
+# the followers and people following of every single person in relation to the original user.
+def getUserOneLevel(follower, api):
 	print("Getting info for " + str(follower))
 	followerIDS = []
 	followingIDS = []
@@ -61,6 +71,7 @@ if __name__ == '__main__':
 	lookupTerm = sys.argv[1]
 	dbCollectionName = "info_" + lookupTerm
 	initAuthKeys(0)
+
 	#Get initial following/follower list of user entered. 
 	followerIDS = []
 	followingIDS = []
