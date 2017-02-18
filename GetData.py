@@ -40,7 +40,7 @@ def initAuthKeys(keyCount):
 # This function takes information from getUserOneLevel and formats it into a python dictionary
 # which MongoDB will gladly accept and insert into the database.
 def formatJson(id, fList, field):
-	user = {"TID" : id}
+	user = {"TID" : str(id)}
 	user[str(field)] = {}
 	for i, value in enumerate(fList):
 		user[field][str(i)] = str(value)
@@ -49,14 +49,19 @@ def formatJson(id, fList, field):
 # Given an originaly user (passed from main), this function will collect all of 
 # the followers and people following of every single person in relation to the original user.
 def getFollowing(follower, api):
-	print("Getting people " + str(follower) + " follows.")
-	followingList = []
-	dbCollectionName = "info_" + str(follower) 
-	for page in tweepy.Cursor(api.friends_ids, id = follower).pages(1):
-		followingList.extend(page)
-		time.sleep(61)
+	try:
+		print("Getting people " + str(follower) + " follows.")
+		followingList = []
+		dbCollectionName = "info_" + str(follower) 
+		for page in tweepy.Cursor(api.friends_ids, id = follower).pages(1):
+			followingList.extend(page)
+			time.sleep(61)
 	
-	db[dbCollectionName].insert_one(formatJson(follower, followingList, "following"))
+		db[dbCollectionName].insert_one(formatJson(follower, followingList, "following"))
+	except:
+		print("Follower " + str(follower) + " didn't complete.")
+
+
 
 if __name__ == '__main__':
 	
