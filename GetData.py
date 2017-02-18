@@ -7,7 +7,7 @@ import sys
 from Timeline import getUserTimeline
 
 client = MongoClient()
-db = client.IDs_AB_Revision
+db = client.IDs
 
 AUTH_KEYS = []
 
@@ -39,25 +39,32 @@ def initAuthKeys(keyCount):
 
 # This function takes information from getUserOneLevel and formats it into a python dictionary
 # which MongoDB will gladly accept and insert into the database.
-def formatJson(id, followersList):
+def formatJson(id, followersList, following):
 	user = {"TID" : id}
 	user["followers"] = {}
+	user["following"] = {}
 	
 	for i,value in enumerate(followersList):
 		user["followers"][str(i)] = str(value)	
+	for i, value in enumerate(following):
+		user["following"][str(i)] = str(value)
 	return user
 
 # Given an originaly user (passed from main), this function will collect all of 
 # the followers and people following of every single person in relation to the original user.
 def getUserOneLevel(follower, api):
 	print("Getting info for " + str(follower))
+	followerIDS = []
 	followingIDS = []
 	dbCollectionName = "info_" + str(follower) 
-	for page in tweepy.Cursor(api.friends_ids, id = follower).pages(1):
+	for page in tweepy.Cursor(api.followers_ids, id = follower).pages(1):
+		followerIDS.extend(page)
+		time.sleep(61)
+	
+	for page in tweepy.Cursor(api.followers_ids, id = follower).pages(1):
 		followingIDS.extend(page)
 		time.sleep(61)
-	print("User " + str(follower) + " is following " + str(len(followingIDS)) + " users.") 
-	db[dbCollectionName].insert_one(formatJson(follower, followingIDS))
+	db[dbCollectionName].insert_one(formatJson(follower, followerIDS, followingIDS))
 
 if __name__ == '__main__':
 	
@@ -91,15 +98,19 @@ if __name__ == '__main__':
 	auth.set_access_token(AKEY, ASECRET)
 	api = tweepy.API(auth)
 	
-	#Gets all of the followers for user 0.
+		
 	for page in tweepy.Cursor(AUTH_KEYS[0].followers_ids, id=lookupTerm).pages(1):
 		print("Getting followers for " + str(lookupTerm))
 		followerIDS.extend(page)
 		time.sleep(61)
-	print("Length of " + lookupTerm + "'s followers list: " + str(len(followerIDS)))	
-	#getUserFollowers() isn't defined anymore. 
-	db[dbCollectionName].insert_one(formatJson(lookupTerm, followerIDS))
+	
+	for page in tweepy.Cursor(AUTH_KEYS[0].friends_ids, id=lookupTerm).pages(1):
+		print("Getting people who " + str(lookupTerm) + " follows")
+		followingIDS.extend(page)
+		time.sleep(61)
+	
+	db[dbCollectionName].insert_one(formatJson(lookupTerm, followerIDS, followingIDS))
 	for follower in followerIDS:
-		getUserOneLevel(follower, AUTH_KEYS[0])	
+		getUserFollowers(follower, AUTH_KEYS[0])	
 
 
