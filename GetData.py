@@ -61,7 +61,7 @@ def getUserOneLevel(follower, api):
 		followerIDS.extend(page)
 		time.sleep(61)
 	
-	for page in tweepy.Cursor(api.followers_ids, id = follower).pages(1):
+	for page in tweepy.Cursor(api.friends_ids, id = follower).pages(1):
 		followingIDS.extend(page)
 		time.sleep(61)
 	db[dbCollectionName].insert_one(formatJson(follower, followerIDS, followingIDS))
