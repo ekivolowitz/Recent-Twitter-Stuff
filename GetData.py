@@ -41,9 +41,9 @@ def initAuthKeys(keyCount):
 # which MongoDB will gladly accept and insert into the database.
 def formatJson(id, fList, field):
 	user = {"TID" : id}
-	user[field] = {}
+	user[str(field)] = {}
 	for i, value in enumerate(fList):
-		user[field]][str(i)] = str(value)
+		user[field][str(i)] = str(value)
 	return user
 
 # Given an originaly user (passed from main), this function will collect all of 
