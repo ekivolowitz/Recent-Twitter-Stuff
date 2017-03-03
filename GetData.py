@@ -58,7 +58,7 @@ def getFollowing(follower, api):
 			time.sleep(61)
 	
 		db[dbCollectionName].insert_one(formatJson(follower, followingList, "following"))
-	except:
+	except TweepError:
 		print("Follower " + str(follower) + " didn't complete.")
 
 def fetchAndInsertFollowingsUserDB(twitterIDSList):
@@ -71,7 +71,7 @@ def fetchAndInsertFollowingsUserDB(twitterIDSList):
 			users_db["user_information"].insert_many(page)
 			print("Finished Batch Insert of followings per follower")
 			time.sleep(60)
-		except:
+		except TweepError:
 			print("Protected User FollowignsUserDB")
 #Receives a list of all the collections and chops it up into sublists of 100 each.
 def fetchAndInsertCollectionUserDB(twitterIDSList):
