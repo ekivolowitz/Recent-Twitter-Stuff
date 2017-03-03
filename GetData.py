@@ -8,7 +8,7 @@ from Timeline import getUserTimeline
 
 client = MongoClient()
 db = client.AB_Revision
-
+users_db = client.IDs
 AUTH_KEYS = []
 
 
@@ -61,13 +61,43 @@ def getFollowing(follower, api):
 	except:
 		print("Follower " + str(follower) + " didn't complete.")
 
-
-
+def fetchAndInsertFollowingsUserDB(twitterIDSList):
+	#Creates sublists of length 100 of all of IDS
+	subLists = [twitterIDSList[x:x+100] for x in range(0, len(twitterIDSList), 100)]
+	#Iterates over the lists of 100
+	for userList in subLists:
+		try:
+			page = AUTH_KEYS[0].lookup_users(user_ids=userList)
+			users_db["user_information"].insert_many(page)
+			print("Finished Batch Insert of followings per follower")
+			time.sleep(60)
+		except:
+			print("Protected User FollowignsUserDB")
+#Receives a list of all the collections and chops it up into sublists of 100 each.
+def fetchAndInsertCollectionUserDB(twitterIDSList):
+	collectionsGroup100 = [twitterIDSList[x:x+100] for x in range(0, len(twitterIDSList), 100)]
+	
+	#Iterates over the sublists
+	for userLists in collectionsGroup100:
+		#user is the twitterID of the people in the collections.
+		#Here is where we would want to get all of the followers of a user.
+		for user in userLists:
+			collLookup = "info_" + user
+			print(collLookup)
+			temp = []
+			for key,value in db[collLookup].find_one()['following'].items():
+				temp.append(value)
+			fetchAndInsertFollowingsUserDB(temp)
+		try:
+			page = AUTH_KEYS[0].lookup_users(user_ids=userLists)
+			users_db["user_information"].insert_many(page)
+		except:
+			print("Protected User")
 if __name__ == '__main__':
 	
 	lookupTerm = sys.argv[1]
 	dbCollectionName = "info_" + lookupTerm
-
+	
 	initAuthKeys(0)
 
 	# getUserTimeline is implemented and works, however I haven't implemented it into this code yet.
@@ -93,7 +123,7 @@ if __name__ == '__main__':
 	auth = tweepy.OAuthHandler(CKEY, CSECRET)
 	auth.set_access_token(AKEY, ASECRET)
 	api = tweepy.API(auth)
-	
+		
 		
 	for page in tweepy.Cursor(AUTH_KEYS[0].followers_ids, id=lookupTerm).pages(1):
 		print("Getting followers for " + str(lookupTerm))
@@ -103,5 +133,12 @@ if __name__ == '__main__':
 	db[dbCollectionName].insert_one(formatJson(lookupTerm, followerIDS, "followers"))
 	for follower in followerIDS:
 		getFollowing(follower, AUTH_KEYS[0])	
-
-
+	
+	collections = db.collection_names(include_system_collections=False)
+	for i,user in enumerate(collections):
+		collections[i] = str(user[5:])
+	
+	#Gets all of the user profiles for every person in the collection in the db,
+	#Then gets all of the people each of those users are following's accounts."
+	fetchAndInsertCollectionUserDB(collections)	
+	
