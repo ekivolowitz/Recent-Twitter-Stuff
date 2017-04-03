@@ -56,7 +56,6 @@ def getFollowing(follower, api):
 		for page in tweepy.Cursor(api.friends_ids, id = follower).pages(1):
 			followingList.extend(page)
 			time.sleep(61)
-	
 		db[dbCollectionName].insert_one(formatJson(follower, followingList, "following"))
 	except TweepError:
 		print("Follower " + str(follower) + " didn't complete.")
