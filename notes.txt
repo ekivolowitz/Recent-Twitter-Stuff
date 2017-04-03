@@ -1,0 +1,4 @@
+I need to get pip3 and venv installed on peach.
+I also need to use this command over ssh to run the script headlessly:
+
+  ssh ekivolowitz@peach.stat.wisc.edu "python3 private/Recent-Twitter-Stuff/GetData.py
