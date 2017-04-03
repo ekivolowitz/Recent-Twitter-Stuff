@@ -10,8 +10,7 @@
 
 Twitter research for constructing social networks for audience segmentation.
 
-<h2>USAGE: python3 GetData.py \<twitter ID or handle></h2>
+<h2>USAGE: python3 GetData.py <twitter ID or handle></h2>
 
-<h2> I would strongly recommend running this script as a headless command on a remote machine. In order to do this, you must run
- 
-ssh username@remote-machine-address "python3 path/to/script/GetData.py <username>"</h2>
+<p>I would strongly recommend running this script as a headless command on a remote machine. In order to do this, you must run
+ssh username@remote-machine-address "python3 path/to/script/GetData.py <username>"</p>
