@@ -2,8 +2,11 @@ secrets.json
 __pycache__/
 output.txt
 Makefile
+<<<<<<< HEAD
+=======
 
 
 *.csv
 
 
+>>>>>>> master
